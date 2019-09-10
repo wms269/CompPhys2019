@@ -1,0 +1,56 @@
+#! /bin/csh -f
+# v2000.08.27
+# Latex a file and output postscript  
+# Andrew Stephens - The Ohio State University - Department of Astronomy
+
+if ($1 == "") then
+  echo " "
+  echo "NAME"
+  echo "       dotex texfile [-l]"
+  echo " "
+  echo "DESCRIPTION"
+  echo "       Run LaTeX, dvips, and ghostview on a LaTeX file."
+  echo " "
+  echo "OPTIONS"
+  echo "       -l"
+  echo "       Landscape mode"
+  echo " "
+  echo "AUTHOR"
+  echo "       2000.03.09 - Andrew Stephens - OSU Astronomy"
+  echo " "
+  exit
+endif
+
+set root   = $1:r
+set input  = $root.tex
+set dvi    = $root.dvi
+set log    = $root.log
+set output = $root.ps
+set outpdf = $root.pdf
+
+if ( ! -e $input ) then
+  echo Dude, $input does not exist!
+  exit
+else if ( -z $input ) then
+  echo Dude, $input is empty!
+  exit
+endif
+
+echo LaTeXing $input...
+latex $input
+
+echo Creating postscript file $output...
+if ("$2" == "-l") then
+  echo "...using landscape mode..."
+  dvips -t landscape -Ppdf -o ${output} $dvi
+else
+  dvips -t letter -Ppdf -o ${output} $dvi
+endif
+\rm $dvi $log
+ps2pdf ${output} $outpdf
+
+
+#echo Ghostviewing $output...
+#ghostview $output 
+
+exit
