@@ -6,10 +6,11 @@
 
 #define PI (1.0/3.0)
 
-//float func1(float x); //function prototype of func1 (for main to know)
+float trapzd(float (*func)(float), float a, float b, int n);
+
+float func1(float x); //function prototype of func1 (for main to know)
 int filesize(FILE *fp);
 float func2(float x, float *y, float *vec);
-float trapzd(float (*func)(float), float a, float b, int n);
 
 // declare a structure of "type" particle
 // make P a global variable
@@ -29,7 +30,7 @@ int main(int argc, char **argv) //command line arguments
   FILE *fp; // file pointer. 
   int N, i, k, ii[10];
   float x, f, etol,a=0,b=1, total, h, y, *vec, **vec2d, total_NR;
-  float func1();
+  float func1(float);
 
   // declare array of structures
   N = atoi(argv[1]);
@@ -40,7 +41,6 @@ int main(int argc, char **argv) //command line arguments
   P[0].temp = 100;
   P[0].density = 1.0E-6;
   fprintf(stderr,"Particle 0 has temp= %e\n",P[0].temp);
-  exit(0);
 
   
   vec = malloc(100*sizeof(float)); // 100-element array, 0-indexed
@@ -85,7 +85,11 @@ int main(int argc, char **argv) //command line arguments
   total += func1(b)/2*h;
 
   // let's compare to NR's trapedzoid method
-  //total_NR = trapzd(func1, a, b, N);
+  for(i=1;;i++)
+    {
+      total_NR = trapzd(func1, a, b, i);
+      if(pow(2,i)>=N)break;
+    }
   
   printf("%d %e %e %e\n\n\n\n",N,total,total_NR,fabs(total-PI)/PI);
   exit(0);
@@ -114,8 +118,7 @@ int main(int argc, char **argv) //command line arguments
   
 }
 
-float func1(x)
-     float x;
+float func1(float x)
 {
   float y;
   y = x*x;

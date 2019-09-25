@@ -1,3 +1,4 @@
+#include <stdio.h>
 #define FUNC(x) ((*func)(x))
 
 float trapzd(float (*func)(float), float a, float b, int n)
